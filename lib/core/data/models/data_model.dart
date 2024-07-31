@@ -10,7 +10,7 @@ class DataModel with _$DataModel {
     required String id,
     required List<String> field,
     required Point start,
-    required Point finish,
+    required Point end,
   }) = _DataModel;
 
   factory DataModel.fromJson(Map<String, dynamic> json) =>
