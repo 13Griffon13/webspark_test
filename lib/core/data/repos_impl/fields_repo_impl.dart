@@ -14,21 +14,20 @@ class FieldsRepoImpl extends FieldsRepo {
 
   List<ResultModel> _calculatedFields = [];
 
-  final StreamController<ResultModel> _calculationController =
-      StreamController();
-
   StreamSubscription<ResultModel>? _calculationSubscription;
 
   @override
-  Stream<ResultModel> calculateLoadedFields() {
+  List<ResultModel> calculateLoadedFields({
+    void Function(int, int)? onProgress,
+  }) {
     _calculationSubscription =
         PathCalculationService.calculate(_loadedFields).listen(
       (result) {
         _calculatedFields.add(result);
-        _calculationController.add(result);
+        onProgress?.call(_calculatedFields.length, _loadedFields.length);
       },
     );
-    return _calculationController.stream;
+    return _calculatedFields;
   }
 
   @override
@@ -38,8 +37,14 @@ class FieldsRepoImpl extends FieldsRepo {
   List<DataModel> get fields => _loadedFields;
 
   @override
-  Future<List<DataModel>> loadFields() async {
-    final response = await _flutterRecruitingApi.getData();
+  Future<List<DataModel>> loadFields({
+    void Function(int, int)? onProgress,
+  }) async {
+    _calculatedFields = [];
+    _loadedFields = [];
+    final response = await _flutterRecruitingApi.getData(
+      onProgress: onProgress,
+    );
     if (response.data != null && response.data!.isNotEmpty) {
       _loadedFields = response.data!;
     }
@@ -47,10 +52,13 @@ class FieldsRepoImpl extends FieldsRepo {
   }
 
   @override
-  Future<bool> sendResults() async {
-    await _flutterRecruitingApi.sendData(_calculatedFields);
+  Future<bool> sendResults({void Function(int, int)? onProgress}) async {
+    final response = await _flutterRecruitingApi.sendData(
+      _calculatedFields,
+      onProgress: onProgress,
+    );
 
-    return true;
+    return response;
   }
 
   @override
@@ -61,6 +69,5 @@ class FieldsRepoImpl extends FieldsRepo {
   @override
   void dispose() {
     _calculationSubscription?.cancel();
-    _calculationController.close();
   }
 }

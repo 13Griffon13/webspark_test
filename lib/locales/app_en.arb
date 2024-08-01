@@ -2,5 +2,14 @@
   "homePage": "Home page",
   "setBaseUrl": "Set valid API base URL i order to continue",
   "urlHint": "Base Url",
-  "startCountingProcess": "Start counting process"
+  "startCountingProcess": "Start counting process",
+  "badUrl": "Bad URL",
+  "somethingWentWrong": "Something went wrong.",
+  "details": "Details",
+  "back": "Back",
+  "obtainingData": "Obtaining data...",
+  "calculating": "Calculating...",
+  "loadedAndProcessed": "Data loaded and processed successfully",
+  "uploadingResults": "Uploading results...",
+  "uploadResults": "Upload results"
 }

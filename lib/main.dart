@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:webspark_task/core/data/repos_impl/fields_repo_impl.dart';
 import 'package:webspark_task/core/view/fields_cubit/fields_cubit.dart';
-import 'package:webspark_task/core/view/home/home.dart';
+import 'package:webspark_task/core/view/pages/home/home.dart';
 
 void main() {
   runApp(const MyApp());

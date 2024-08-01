@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:webspark_task/core/data/models/response_model.dart';
 import 'package:webspark_task/core/data/models/result_model.dart';
@@ -18,16 +20,26 @@ class FlutterRecruitingApi {
 
   void setBaeUrl(String newUrl) => _baseUrl = newUrl;
 
-  Future<ResponseModel> getData() async {
-    final response = await _dio.get('$_baseUrl$_getPath');
+  Future<ResponseModel> getData({
+    void Function(int, int)? onProgress,
+  }) async {
+    final response = await _dio.get(
+      '$_baseUrl$_getPath',
+      onReceiveProgress: onProgress,
+    );
     return ResponseModel.fromJson(response.data);
   }
 
-  Future<bool> sendData(List<ResultModel> results) async {
-    await _dio.post(
+  Future<bool> sendData(
+    List<ResultModel> results, {
+    void Function(int, int)? onProgress,
+  }) async {
+    final encodedData = jsonEncode(results);
+    final response = await _dio.post(
       '$_baseUrl$_postPath',
-      data: results,
+      data: encodedData,
+      onReceiveProgress: onProgress,
     );
-    return true;
+    return response.statusCode == 200;
   }
 }

@@ -6,11 +6,13 @@ abstract class FieldsRepo {
 
   List<ResultModel> get calculatedFields;
 
-  Future<List<DataModel>> loadFields();
+  Future<List<DataModel>> loadFields({void Function(int, int)? onProgress});
 
-  Future<bool> sendResults();
+  Future<bool> sendResults({void Function(int, int)? onProgress});
 
-  Stream<ResultModel> calculateLoadedFields();
+  List<ResultModel> calculateLoadedFields({
+    void Function(int, int)? onProgress,
+  });
 
   void setSourceUrl(String url);
 

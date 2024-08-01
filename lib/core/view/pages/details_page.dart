@@ -13,6 +13,7 @@ class DetailsPage extends StatelessWidget {
 
   final DataModel dataModel;
   final ResultModel resultModel;
+  final double _cellSize = 60.0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +26,22 @@ class DetailsPage extends StatelessWidget {
                   'Ids do not match',
                 ),
               )
+            //TODO(Hrihorii): scroll issues
             : Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  //used custom grid for app to support asymmetrical fields
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: dataModel.field.indexed
                         .map(
                           (row) => Row(
-                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: row.$2.characters.indexed
                                 .map(
                                   (column) => Container(
+                                    width: _cellSize,
+                                    height: _cellSize,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       border: Border.all(),
@@ -49,7 +56,9 @@ class DetailsPage extends StatelessWidget {
                                     child: Text(
                                       '(${column.$1},${row.$1})',
                                       style: const TextStyle(
-                                        color: Colors.grey,
+                                        //grey so it clearly visible on any
+                                        // colored cell
+                                        color: Colors.blueGrey,
                                       ),
                                     ),
                                   ),

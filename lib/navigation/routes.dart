@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webspark_task/core/data/models/data_model.dart';
 import 'package:webspark_task/core/data/models/result_model.dart';
-import 'package:webspark_task/core/view/home/details_page.dart';
-import 'package:webspark_task/core/view/home/result_page.dart';
+import 'package:webspark_task/core/view/pages/details_page.dart';
+import 'package:webspark_task/core/view/pages/result_page.dart';
 
 //Might be a good idea to use routing library but navigation
 //is simple enough

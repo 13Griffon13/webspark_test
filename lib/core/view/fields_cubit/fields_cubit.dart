@@ -15,19 +15,21 @@ class FieldsCubit extends Cubit<FieldsState> {
   ) : super(const FieldsState.initial());
 
   final FieldsRepo _fieldsRepo;
-  StreamSubscription? _progressSubscription;
 
   Future<void> startCalculation(String url) async {
     try {
-      emit(const FieldsState.loading());
       _fieldsRepo.setSourceUrl(url);
-      await _fieldsRepo.loadFields();
-      _progressSubscription = _fieldsRepo.calculateLoadedFields().listen(
-        (event) {
-          final progress =
-              _fieldsRepo.calculatedFields.length / _fieldsRepo.fields.length;
-          emit(FieldsState.calculating(progress));
-          if (progress >= 1) {
+      emit(const FieldsState.loading(0.0));
+      await _fieldsRepo.loadFields(
+        onProgress: (value, total) {
+          emit(FieldsState.loading(value / total));
+        },
+      );
+      emit(const FieldsState.calculating(0.0));
+      _fieldsRepo.calculateLoadedFields(
+        onProgress: (value, total) {
+          emit(FieldsState.calculating(value / total));
+          if (value / total == 1.0) {
             emit(
               FieldsState.calculated(
                 _fieldsRepo.fields,
@@ -42,9 +44,35 @@ class FieldsCubit extends Cubit<FieldsState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    _progressSubscription?.cancel();
-    return super.close();
+  Future<void> uploadResults() async {
+    try {
+      await state.mapOrNull(calculated: (calculated) async {
+        emit(const FieldsState.uploading(0.0));
+        final isSuccess =
+            await _fieldsRepo.sendResults(onProgress: (value, total) {
+          emit(
+            FieldsState.uploading(
+              value / total,
+            ),
+          );
+        });
+        if (isSuccess) {
+          emit(
+            FieldsState.uploaded(
+              _fieldsRepo.fields,
+              _fieldsRepo.calculatedFields,
+            ),
+          );
+        } else {
+          emit(const FieldsState.error(''));
+        }
+      });
+    } on Exception catch (e) {
+      emit(FieldsState.error(e.toString()));
+    }
+  }
+
+  void reset() {
+    emit(const FieldsState.initial());
   }
 }

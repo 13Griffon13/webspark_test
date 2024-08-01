@@ -16,12 +16,16 @@ class ResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: ListView.builder(
           itemCount: results.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(results[index].result.path),
+              title: Text(
+                results[index].result.path,
+                textAlign: TextAlign.center,
+              ),
               onTap: () {
                 final field = fields
                     .where((element) => element.id == results[index].id)
