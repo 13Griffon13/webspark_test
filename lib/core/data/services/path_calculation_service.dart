@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:isolate';
 
 import 'package:webspark_task/core/data/models/data_model.dart';
 import 'package:webspark_task/core/data/models/point.dart';
@@ -6,7 +7,37 @@ import 'package:webspark_task/core/data/models/result.dart';
 import 'package:webspark_task/core/data/models/result_model.dart';
 
 abstract class PathCalculationService {
-  static Stream<ResultModel> calculate(List<DataModel> fields) async* {
+  static Stream<ResultModel> calculate(List<DataModel> fields) {
+    final resultPort = ReceivePort();
+    //Need to be placed in separate isolate cause during lengthy calculation
+    // might cause app to freeze
+    Isolate.spawn(
+      isolateProcess,
+      [
+        resultPort.sendPort,
+        fields,
+      ],
+    );
+    return resultPort.map((result) => result as ResultModel);
+  }
+
+  static Future<void> isolateProcess(List<dynamic> args) async {
+    final SendPort sendPort = args[0];
+    final List<DataModel> fields = args[1];
+    //Code for testing loaders
+    //final x =20;
+    // for (int i = 0; i < x; i++) {
+    //   await Future.delayed(Duration(seconds: 1));
+    //   sendPort.send(
+    //     const ResultModel(
+    //       id: '',
+    //       result: Result(
+    //         steps: [],
+    //         path: '',
+    //       ),
+    //     ),
+    //   );
+    // }
     for (final field in fields) {
       final path = _calculatePath(field.start, field.end, field.field);
       final resultModel = ResultModel(
@@ -15,8 +46,9 @@ abstract class PathCalculationService {
           path,
         ),
       );
-      yield resultModel;
+      sendPort.send(resultModel);
     }
+    Isolate.exit();
   }
 
   static List<Point> _calculatePath(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webspark_task/app_sizes/spacing.dart';
 
 class Loader extends StatelessWidget {
   const Loader({
@@ -19,9 +20,13 @@ class Loader extends StatelessWidget {
         Text(
           title,
         ),
-        CircularProgressIndicator(
-          value: progress,
+        const SizedBox(
+          height: Spacing.padding8px,
         ),
+        CircularProgressIndicator(
+          value: progress == 0.0 ? null : progress,
+        ),
+        Text('${(progress * 100).toStringAsFixed(2)}%')
       ],
     );
   }

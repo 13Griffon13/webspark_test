@@ -93,23 +93,31 @@ class _HomeState extends State<Home> {
                   ));
                 },
                 calculated: (calculated) {
-                  return Column(
-                    children: [
-                      Text(locale.loadedAndProcessed),
-                      ElevatedButton(
-                          onPressed: () {
-                            context.read<FieldsCubit>().uploadResults();
-                          },
-                          child: Text(
-                            locale.uploadResults,
-                          ))
-                    ],
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Spacer(),
+                        Text(locale.loadedAndProcessed),
+                        const Spacer(),
+                        ElevatedButton(
+                            onPressed: () {
+                              context.read<FieldsCubit>().uploadResults();
+                            },
+                            child: Text(
+                              locale.uploadResults,
+                            ))
+                      ],
+                    ),
                   );
                 },
                 uploading: (uploading) {
-                  return Loader(
-                    title: locale.uploadingResults,
-                    progress: uploading.progress,
+                  return Center(
+                    child: Loader(
+                      title: locale.uploadingResults,
+                      progress: uploading.progress,
+                    ),
                   );
                 },
                 error: (error) {
